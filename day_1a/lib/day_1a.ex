@@ -3,7 +3,7 @@ defmodule Day1a do
     str
       |> treat_data
       # |> IO.inspect
-      |> count_lengths({0, 0})
+      |> count_lengths
       |> calculate_distance
   end
 
@@ -11,52 +11,50 @@ defmodule Day1a do
     str
       |> String.strip
       |> String.split(", ")
-      |> convert_pairs([])
+      |> convert_pairs
   end
 
-  defp convert_pairs(["L" <> length | tail], []) do
-    convert_pairs(tail, [{"W", String.to_integer(length)}])
+  defp convert_pairs(old_list, new_list \\ [])
+
+  defp convert_pairs([<<hand_direction::bytes-size(1)>> <> length | tail], []) do
+    cardinal_direction =
+      case hand_direction do
+        "L" ->
+          "W"
+        "R" ->
+          "E"
+      end
+    convert_pairs(tail, [{cardinal_direction, String.to_integer(length)}])
   end
 
-  defp convert_pairs(["R" <> length | tail], []) do
-    convert_pairs(tail, [{"E", String.to_integer(length)}])
-  end
-
-  defp convert_pairs(["L" <> length | tail], converted_list = [{"N", _} | _]) do
-    convert_pairs(tail, [{"W", String.to_integer(length)} | converted_list])
-  end
-
-  defp convert_pairs(["L" <> length | tail], converted_list = [{"W", _} | _]) do
-    convert_pairs(tail, [{"S", String.to_integer(length)} | converted_list])
-  end
-
-  defp convert_pairs(["L" <> length | tail], converted_list = [{"S", _} | _]) do
-    convert_pairs(tail, [{"E", String.to_integer(length)} | converted_list])
-  end
-
-  defp convert_pairs(["L" <> length | tail], converted_list = [{"E", _} | _]) do
-    convert_pairs(tail, [{"N", String.to_integer(length)} | converted_list])
-  end
-
-  defp convert_pairs(["R" <> length | tail], converted_list = [{"N", _} | _]) do
-    convert_pairs(tail, [{"E", String.to_integer(length)} | converted_list])
-  end
-
-  defp convert_pairs(["R" <> length | tail], converted_list = [{"W", _} | _]) do
-    convert_pairs(tail, [{"N", String.to_integer(length)} | converted_list])
-  end
-
-  defp convert_pairs(["R" <> length | tail], converted_list = [{"S", _} | _]) do
-    convert_pairs(tail, [{"W", String.to_integer(length)} | converted_list])
-  end
-
-  defp convert_pairs(["R" <> length | tail], converted_list = [{"E", _} | _]) do
-    convert_pairs(tail, [{"S", String.to_integer(length)} | converted_list])
+  defp convert_pairs([<<hand_direction::bytes-size(1)>> <> length | tail], converted_list = [{previous_direction, _} | _]) do
+    cardinal_direction =
+      case {hand_direction, previous_direction} do
+        {"L", "N"} ->
+          "W"
+        {"L", "W"} ->
+          "S"
+        {"L", "S"} ->
+          "E"
+        {"L", "E"} ->
+          "N"
+        {"R", "N"} ->
+          "E"
+        {"R", "W"} ->
+          "N"
+        {"R", "S"} ->
+          "W"
+        {"R", "E"} ->
+          "S"
+      end
+    convert_pairs(tail, [{cardinal_direction, String.to_integer(length)} | converted_list])
   end
 
   defp convert_pairs([], converted_list) do
     Enum.reverse(converted_list)
   end
+
+  defp count_lengths(list, pair \\ {0, 0})
 
   defp count_lengths([{direction, length} | tail], {x, y}) do
     {new_x, new_y} =
