@@ -2,7 +2,6 @@ defmodule Day1b do
   def distance_of_first_double_visit(str) do
     str
       |> treat_data
-      # |> IO.inspect
       |> traverse_list
   end
 

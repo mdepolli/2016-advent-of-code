@@ -2,7 +2,6 @@ defmodule Day1a do
   def distance_in_blocks(str) do
     str
       |> treat_data
-      # |> IO.inspect
       |> count_lengths
       |> calculate_distance
   end
